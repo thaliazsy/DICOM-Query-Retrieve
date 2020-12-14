@@ -13,6 +13,7 @@ function getFHIR(val) {
 		}
 	};
 	xhttp.send();
+	
 }
 
 function showOutput(str) {
