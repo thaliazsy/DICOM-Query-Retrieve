@@ -58,7 +58,7 @@ function getPatientList() {
 
     if (pID != "") {
 
-        getJSON(FHIRrootURL + '/Patient/TCUMI106.' + pID, function (data2) {
+        getJSON(FHIRrootURL + '/Patient/' + pID, function (data2) {
             var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
             var row = table.insertRow(-1);
             var cell1 = row.insertCell(0);
@@ -134,7 +134,7 @@ function getImagingStudyList() {
 
     var pID = document.getElementById("PatientID").value.trim();
     if (pID != "") {
-        url += '?subject=TCUMI106.' + pID
+        url += '?subject=' + pID
     }
 
 
@@ -192,21 +192,7 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     }
 
     for (var j = first; j < dataAry.length; j++) {
-
-        if (dataType != "Study" || dataAry[j].resource.series[0].modality.code != "SR") {
-
-            // var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-            // var row = table.insertRow(-1);
-            // var cell = row.insertCell(0);
-            // cell.colSpan=3;
-            // cell.innerHTML="Not an Image"
-            drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
-        } else {
-
-
-        }
-
-
+        drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
     }
 
 }
