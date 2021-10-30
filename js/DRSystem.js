@@ -26,11 +26,14 @@ function searchPatient() {
     else {
         var strUrl;
         switch (condition) {
-            case "Patient ID":
-                strUrl = fhir.url + "DiagnosticReport?subject=TCUMI106." + conditionValue;
+            case "Patient":
+                strUrl = FHIRrootURL + "/DiagnosticReport?subject=" + conditionValue;
                 break;
+            case "DiagnosticReport":
+                strUrl = FHIRrootURL + "/DiagnosticReport/" + conditionValue;
+                break;        
         }
-        getJSON(strUrl, 0, "Patient", null, null, null);
+        getJSON(strUrl, 0, condition, null, null, null);
     }
 }
 function getJSON(strUrl, firstrowNum, type, tableTarget, fromDR, typexxpt) {
@@ -42,7 +45,7 @@ function getJSON(strUrl, firstrowNum, type, tableTarget, fromDR, typexxpt) {
         if (this.readyState == 4) // && this.status == 201) 
         {
             var res = JSON.parse(this.responseText);
-            if (type == "Patient") patientObservation = res;
+            if (type == "Patient" || type=="DiagnosticReport") patientObservation = res;
             else if (type == "Finding") { findingObservation = res; findingCount++; }
 
             if (res != undefined && res.resourceType == "OperationOutcome") {
@@ -61,7 +64,7 @@ function getJSON(strUrl, firstrowNum, type, tableTarget, fromDR, typexxpt) {
     xhr.send();
 }
 function setTablePatient(patientObservation, firstrowNum, type, tableTarget, findingCount, fromDR, typexxpt) {
-    if (type == "Patient") {
+    if (type == "Patient" || type =="DiagnosticReport") {
         clearDiv(document.getElementById("contactBox"));
         clearDiv(document.getElementById("listPatient"));
         clearDiv(document.getElementById("findingBox"));

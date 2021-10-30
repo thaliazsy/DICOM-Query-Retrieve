@@ -804,6 +804,7 @@
 		function HandlePopupResultDR(DR_id) {
 			DR_ID = DR_id;
 			//alert(DR_ID);
+			window.open(FHIRrootURL + '/DiagnosticReport/' + DR_id)
 		}
 		function createDReport() {
 			if (modality == "MG") {
