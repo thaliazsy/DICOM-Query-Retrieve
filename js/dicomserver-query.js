@@ -143,8 +143,6 @@ function getImagingStudyList() {
     var serverIndex = document.getElementById("DCMserver").selectedIndex;
     DICOMweb = dicomwebURLs[serverIndex];
     DICOMwado = wadoURLs[serverIndex];
-    alert(serverIndex +"\n"+DICOMweb+"\n"+DICOMwado);
-
 
     var url = DICOMweb + '/studies';
 
