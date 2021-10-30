@@ -114,18 +114,24 @@
 	}
 	
 	#nav li:hover .ddl2{ 
-		top: 56;
+		top: 8;
 		left:58px;
+		/* top: 56; */
+		/* left:58px; */
 	}
 	
 	#nav li:hover .ddl3{ 
-		top: 104;
-		left:58px;
+		top: 56; 
+		left:58px; 
+		/* top: 104; */
+		/* left:58px; */
 	}
 	
 	#nav li:hover .ddl4{ 
-		top: 152;
+		top: 104;
 		left:58px;
+		/* top: 152; */
+		/* left:58px; */
 	}
 	
 	#nav li:hover .ddl5{ 
@@ -231,6 +237,10 @@
 	
 	body{
 		background-color: black;
+	}
+	
+	#myTable{
+		margin: 0 auto;
 	}
 	
 	#myTable th, #myTable tr, #myTable td{

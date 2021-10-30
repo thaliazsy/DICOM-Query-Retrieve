@@ -1,4 +1,5 @@
 //GET FHIR value
+//GET FHIR value
 function getFHIR(val) {
 	initialization();
 	var FHIRObsSource = fhir.url + "Observation/" + val;
@@ -363,11 +364,8 @@ function getFHIRDR(id, type) {
 }
 function displayDR(type) {
 	//clearDiv(document.getElementById("findingBox"));
-
 	var contactBox = (type == "stuAnswer") ? document.getElementById("contactBox") : document.getElementById("contactBox2");
-
 	clearDiv(contactBox);
-
 	var singlePatient = (DRObservation.entry == undefined) ? DRObservation : DRObservation.entry[id - 1].resource;
 
 	var table = document.createElement("table");

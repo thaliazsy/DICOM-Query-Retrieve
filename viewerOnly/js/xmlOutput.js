@@ -1,4 +1,4 @@
-var obsID = '';
+var observationID = '';
 var ArrayFID;
 var params = {};
 var patientStudy_ID, ImagingStudy_ID, DRObservation, modality, DR_ID;
@@ -175,10 +175,8 @@ function postData(jsonString, type, formID) {
 		if (this.readyState == 4) // && this.status == 201) 
 		{
 			ret = JSON.parse(this.responseText);
-			//alert(this.responseText);
-			// var str = ret.split('<id value="');
-			// var str2 = str[1].split('"/');
-			obsID = ret.id;
+			alert(this.responseText);
+			observationID = ret.id;
 			//alert("FHIR Observation ID: " + ret.id);
 
 			if (formID == 'mass') {
@@ -214,7 +212,6 @@ function postData(jsonString, type, formID) {
 				crect.push(ret.id);
 			if (formID == 'ellipse')
 				cellipse.push(ret.id);
-
 		}
 	};
 	var data = JSON.stringify(jsonString);

@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <title>FHIR Image Exam System-Patient Query</title>    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:700italic,400,300,700' rel='stylesheet'
+        type='text/css'>
+    <link rel='stylesheet' typeof='text/css' media='all' href='css/image-query.css' />
+    <script src="js/settings.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/skel.min.js"></script>
+    <script src="js/skel-panels.min.js"></script>
+    <script src="js/image-query.js"></script>
+    <noscript>
+        <link rel="stylesheet" href="css/skel-noscript.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/style-desktop.css" />
+        <link rel="stylesheet" href="css/style2.css" />
+    </noscript>
+
+</head>
+
+<body class="homepage">
+
+    <!-- Header -->
+    <div id="header">
+        <div class="container">
+
+            <!-- Logo -->
+            <div id="logo">
+                <h1><a href="#">FHIR Image Exam System</a></h1>
+            </div>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li><a href="index.html">HOMEPAGE</a></li>
+                    <li><a href="image-query.html">Image Query</a></li>
+                    <li class="active"><a href="patient-query.html">Patient Query</a></li>
+                    <li><a href="DRSystem.html">Report Review</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+    <!-- Header -->
+
+    <!-- Main -->
+    <div id="main" class="container">
+        <input type="text" id="PatientID" placeholder="Patient ID" />
+        <button onclick="getPatientList()">Search Patient</button>
+        
+        <div id="contentBar">
+        </div>
+        <table id="tablelist" class='content-table'>
+            <thead>
+                <tr>
+                    <th>NO.</th>
+                    <th>Patient UID</th>
+                    <th>Patient Name</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- /Main -->
+
+    <!-- Footer (底部簽名檔)-->
+    <div id="copyright" class="container">
+        Design by: Jeshika, Thalia, Victoria
+    </div>
+    <!-- Footer -->
+    <script>
+        getPatientList();
+    </script>
+</body>
+
+</html>

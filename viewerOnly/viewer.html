@@ -1,25 +1,23 @@
 <html>
-
-<head>
-	<script src="js/xmlOutput.js"></script>
-	<script src="js/getFHIR.js"></script>
-	<script src="js/jsonObservation.js"></script>
-	<script src="js/image-query.js"></script>
-	<script src="js/settings.js"></script>
-	<link rel="stylesheet" href="css/style3.css" />
-</head>
-
+	<head>
+		<script src="js/xmlOutput.js"></script>
+		<script src="js/getFHIR.js"></script>
+		<script src="js/jsonObservation.js"></script>
+		<script src="js/image-query.js"></script>
+		<script src="js/settings.js"></script>
+		<link rel="stylesheet" href="css/style3.css" />
+	</head>
 <body>
 	<div class="row">
 		<div class="column" style="background-color:#202020; width: 11%;">
 			<ul id="nav">
-				<li><img alt="Window Level" title="Window Level" id="windowLevel" src="img/windowLevel.png"
-						class="imgIcon">
-					<ul class="ddl1" style="width: 100px; height: 48px;">
-						<li onclick="windowLW()" class="fontSize">Adjust</li>
-						<li onclick="showRecord()" class="fontSize">Insert Value</li>
-					</ul>
-				</li>
+				<!-- <li><img alt="Window Level" title="Window Level" id="windowLevel" src="img/windowLevel.png" -->
+						<!-- class="imgIcon"> -->
+					<!-- <ul class="ddl1" style="width: 100px; height: 48px;"> -->
+						<!-- <li onclick="windowLW()" class="fontSize">Adjust</li> -->
+						<!-- <li onclick="showRecord()" class="fontSize">Insert Value</li> -->
+					<!-- </ul> -->
+				<!-- </li> -->
 				<li><img alt="Annotation" title="Annotation" id="annotation" class="imgIcon" src="img/annotation.png">
 					<ul class="ddl2" style="width: 100px; height: 96px;">
 						<li onclick="Text()" class="fontSize">Text</li>
@@ -60,21 +58,23 @@
 								style="width:85px; display: block; margin:8px 4px;"></li>
 					</ul>
 				</li>
-				<li><img alt="Zoom Slider" title="Zoom" src="img/zoom.png" class="imgIcon">
-					<ul class="ddl5" style="width: 100px;">
-						<li onclick="zoom(0)" class="fontSize">Fill Viewport</li>
-						<li onclick="zoom(1)" class="fontSize">1x</li>
-						<li onclick="zoom(2)" class="fontSize">2x</li>
-						<li onclick="zoom(4)" class="fontSize">4x</li>
-						<li onclick="zoom(8)" class="fontSize">8x</li>
-					</ul>
-				</li>
-				<li onclick="Pan()"><img alt="Panning" title="Pan" id="fileSource" src="img/pan.png" class="imgIcon">
-				</li>
-				<li onclick="educationalPlatform()"><img alt="Upload to FHIR" title="Upload to FHIR" id="strokeColor"
-						src="img/educationalTraining.svg" class="imgIcon"></li>
-				<li onclick="createDReport()" id="DR_createbutton"><img alt="Create Diagnostic Report"
-						title="Create Diagnostic Report" id="strokeColor" src="img/fileSource.png" class="imgIcon"></li>
+				<!-- <li><img alt="Zoom Slider" title="Zoom" src="img/zoom.png" class="imgIcon"> -->
+					<!-- <ul class="ddl5" style="width: 100px;"> -->
+						<!-- <li onclick="zoom(0)" class="fontSize">Fill Viewport</li> -->
+						<!-- <li onclick="zoom(1)" class="fontSize">1x</li> -->
+						<!-- <li onclick="zoom(2)" class="fontSize">2x</li> -->
+						<!-- <li onclick="zoom(4)" class="fontSize">4x</li> -->
+						<!-- <li onclick="zoom(8)" class="fontSize">8x</li> -->
+					<!-- </ul> -->
+				<!-- </li> -->
+				<!-- <li onclick="Pan()"><img alt="Panning" title="Pan" id="fileSource" src="img/pan.png" class="imgIcon"> -->
+				<!-- </li> -->
+				<!-- <li onclick="educationalPlatform()"><img alt="Upload to FHIR" title="Upload to FHIR" id="strokeColor" -->
+						<!-- src="img/educationalTraining.svg" class="imgIcon"> -->
+				<!-- </li> -->
+				<!-- <li onclick="createDReport()" id="DR_createbutton"><img alt="Create Diagnostic Report" -->
+						<!-- title="Create Diagnostic Report" id="strokeColor" src="img/fileSource.png" class="imgIcon"> -->
+				<!-- </li> -->
 				<div id="textAnnotation" style="display:none; position: absolute; top:400px; z-index: 1;">
 					<font color="white">Text:</font> &nbsp;<input type="text" size="16" id="typeText" class="typeText"
 						onkeypress="return writeText(event)">
@@ -141,7 +141,7 @@
 		//session
 		var studyID = sessionStorage.getItem('studyUID');
 		var seriesID = sessionStorage.getItem('seriesUID');
-		var dicomURL = sessionStorage.getItem('index');
+		var dicomURL = 0;//sessionStorage.getItem('index');		//Ambil File DCM dari array dcmFileArray index ke 0
 		var query = location.search.substring(1);
 		if (query != "") {	//get FHIR Observation id from GET Method
 			var param = query.split(/=/);
@@ -658,12 +658,9 @@
 		}
 
 		function educationalPlatform() {
-
 			//var svghead = '<svg width="' + sourceImage.width + '" height="' + sourceImage.height + '">\n';
 			//var svg = window.btoa(svghead + allAnnotationSVG + '</svg>');
 			//var xmlStr = formInputsToXML(modalityType, document.URL, UID.trim(), svg, sourceImage.width, sourceImage.height, windowCenter, windowWidth, pixelDataOffset, dcmFile, "");
-
-
 			if (DR_ID != undefined) {
 				sessionStorage.setItem("DR_ID", DR_ID);
 				window.open("compareAnswer.html?DR_ID" + DR_ID, "_blank");
@@ -745,7 +742,7 @@
 			tr.appendChild(td = document.createElement("td"));
 			td.appendChild(dropdownform);
 			tr.appendChild(td = document.createElement("td"));
-			td.id = "findingID" + table.rows.length;
+			td.id = "findingID" + (table.rows.length-1);
 			td.innerHTML = "";
 		}
 
@@ -758,6 +755,8 @@
 			svg = window.btoa(svg)
 			formInputsToXML(modalityType, document.URL, UID, svg, sourceImage.width, sourceImage.height, windowCenter,
 				windowWidth, pixelDataOffset, dcmFile, annotationType);
+			
+			document.getElementById("findingID" + rowslength).innerHTML= observationID;
 		}
 
 		function OnSelectedIndexChange(drpdwn, table, rowslength) {
