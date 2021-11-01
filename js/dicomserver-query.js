@@ -13,6 +13,8 @@ function getJSON(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
+     //xhr.setRequestHeader('type', 'application/dicom+json');
+    //xhr.setRequestHeader('Authorization', DICOMtoken);
 
     xhr.onload = function () {
         var status = xhr.status;
@@ -26,8 +28,10 @@ function getJSON(url, callback) {
 function getDICOM(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    //xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.responseType = 'application/dicom';
+    //xhr.responseType = 'application/dicom';
+    xhr.setRequestHeader('Accept', 'multipart/related');
+    xhr.setRequestHeader('type', 'application/dicom+json')
+    //xhr.setRequestHeader('Authorization', DICOMtoken);
 
     xhr.onload = function () {
         var status = xhr.status;
@@ -147,15 +151,33 @@ function getImagingStudyList() {
     var url = DICOMweb + '/studies';
 
     var pID = document.getElementById("PatientID").value.trim();
+    var pName = document.getElementById("PatientName").value.trim();
+    var datefrom = document.getElementById("datefrom").value.trim();
+    var dateto = document.getElementById("dateto").value.trim();
+
+    var paramExist = 0;
+
     if (pID != "") {
-        url += '?subject=' + pID
+        url += '?PatientID=' + pID
+        paramExist=1;
+    }
+    if (pName != "") {
+        url+= (paramExist==0)? '?': '&';
+        url += 'PatientName=' + pName
+        paramExist=1;
     }
 
-
-    var url = DICOMweb + '/studies/?&PatientID=' + pID;
+    if (datefrom != "") {
+        url+= (paramExist==0)? '?': '&';
+        url += 'StudyDate=' + datefrom;
+        if(dateto!= ""){
+            url += '-' + dateto;
+        }
+        paramExist=1;
+    }
+    
     getJSON(url, function (data) {
         drawtablelist(null, null, 0, data, "Study");
-
     });
 }
 
@@ -190,12 +212,23 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
     clearTable(header, tableTarget);
     setcontentNavbar(studyID, seriesID, first, data, dataType);
 
+    if(data.length == 0){
+        var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+        var row = table.insertRow();
+        var cell = row.insertCell();
+        cell.colSpan=3;
+        cell.style.textAlign="center";
+        cell.innerHTML = "No data!";
+    }
+
     var dataAry;
     switch (dataType) {
         case 'Study':
+            //dataAry = JSON.parse(data);
             dataAry = data;
             break;
         case 'Series':
+            //dataAry = JSON.parse(data);
             dataAry = data;
             // arr = data.identifier[0].value.split(':');
             // studyID = arr[2];
@@ -272,6 +305,12 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         }
         else {
             description += "Study Date: -<br>";
+        }
+        if(data["00100020"]["Value"]) {
+            description += "Patient ID: " + data["00100020"]["Value"][0] + "<br>";
+        }
+        else {
+            description += "Patient ID: -<br>";
         }
         if(data["00100010"]["Value"]) {
             description += "Patient Name: " + data["00100010"]["Value"][0]["Alphabetic"] + "<br>";

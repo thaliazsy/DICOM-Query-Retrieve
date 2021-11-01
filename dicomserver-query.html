@@ -50,15 +50,21 @@
 
     <!-- Main -->
     <div id="main" class="container">
-        <label for="cars" style="color: white;">DICOM Server:</label>
-        <select name ="DCMserver" id="DCMserver">
-            <option>https://orthanc.dicom.tw/</option>
-            <option>https://d4c.dicom.org.tw/</option>
-        </select>
+        <label style="color: white;">DICOM Server:</label>
+        <select name ="DCMserver" id="DCMserver"></select>
         <br><br>
         <button onclick="getPatientList()">Search Patient</button>
         <br><br>
+        <label style="color: white;">Patient ID:</label>
         <input type="text" id="PatientID" placeholder="Patient ID" />
+        <br><br>
+        <label style="color: white;">Study Date:</label>
+        <input type="text" id="datefrom" placeholder="From range Date" />
+        <input type="text" id="dateto" placeholder="To range Date" />
+        <br><br>
+        <label style="color: white;">Patient Name:</label>
+        <input type="text" id="PatientName" placeholder="Patient Name" />
+        <br><br>
         <button onclick="getImagingStudyList()">Get Imaging Study List</button>
         
         <div id="contentBar">
@@ -84,5 +90,12 @@
     </div>
     <!-- Footer -->
 </body>
-
+<script>
+    var DCMserver = document.getElementById("DCMserver");
+    for(var i =0; i<dicomwebURLs.length; i++) {
+        var opt = document.createElement('option');
+        opt.text = dicomwebURLs[i];
+        DCMserver.add(opt);
+    }
+</script>
 </html>
