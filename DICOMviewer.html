@@ -142,6 +142,8 @@
 		var studyID = sessionStorage.getItem('studyUID');
 		var seriesID = sessionStorage.getItem('seriesUID');
 		var dicomURL = sessionStorage.getItem('index');
+		var DICOMweb = sessionStorage.getItem("DICOMweb");
+		var DICOMwado = sessionStorage.getItem("DICOMwado");
 		var query = location.search.substring(1);
 		if (query != "") {	//get FHIR Observation id from GET Method
 			var param = query.split(/=/);

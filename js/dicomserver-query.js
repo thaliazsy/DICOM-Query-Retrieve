@@ -177,6 +177,9 @@ function getImagingStudyList() {
     var serverIndex = document.getElementById("DCMserver").selectedIndex;
     DICOMweb = dicomwebURLs[serverIndex];
     DICOMwado = wadoURLs[serverIndex];
+    sessionStorage.setItem("DICOMweb", DICOMweb);
+    sessionStorage.setItem("DICOMwado", DICOMwado);
+
 
     var url = DICOMweb + '/studies';
 
@@ -486,6 +489,7 @@ function populateInstancesList(studyID, seriesID, first, data) {
                 //alert(dcmFiles[v]);
                 //    var url = DICOMrootURL + "/wado/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
                 //var url = DICOMrootURL + "/orthanc/dicom-web/studies/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.4.0/series/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.5.0/instances/1.3.6.1.4.1.5962.99.1.392793638.85272995.1542286085670.3.0";
+                DICOMweb = sessionStorage.getItem("DICOMweb");
                 var url = DICOMweb + "/studies/" + studyID + "/series/" + seriesID + "/instances/" + dcmFiles[v];
                 url = DICOMwado + "/?requestType=WADO&contentType=application/dicom&studyUID=" + studyID + "&seriesUID=" + seriesID + "&objectUID=" + dcmFiles[v];
                 sessionStorage.setItem('index', url);
