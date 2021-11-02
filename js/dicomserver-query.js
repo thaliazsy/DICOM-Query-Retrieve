@@ -1,12 +1,3 @@
-// var DICOMrootURL = 'https://d4c.dicom.org.tw/dcm4chee-arc/aets/DCM4CHEE';
-// var DICOMweb = 'https://d4c.dicom.org.tw/dcm4chee-arc/aets/DCM4CHEE/rs';
-// var DICOMwado = 'https://d4c.dicom.org.tw/dcm4chee-arc/aets/DCM4CHEE/wado';
-// var DICOMui = 'https://d4c.dicom.org.tw/dcm4chee-arc/ui2';
-// var DICOMrootURL = 'https://orthanc.dicom.tw';
-// var DICOMweb = 'https://orthanc.dicom.tw/dicom-web';
-// var DICOMwado = 'https://orthanc.dicom.tw/wado';
-// var DICOMui = 'https://d4c.dicom.org.tw/dcm4chee-arc/ui2';
-
 //init();
 
 var returnType = 'json';
@@ -23,7 +14,6 @@ function getJSON(url, callback) {
     xhr.responseType = 'json';
     }
 
-    
     //xhr.setRequestHeader('Authorization', DICOMtoken);
 
     xhr.onload = function () {
@@ -182,12 +172,6 @@ function getImagingStudyList() {
 
     var url = DICOMweb + '/studies';
 
-    // var pID = document.getElementById("PatientID").value.trim();
-    // var pName = document.getElementById("PatientName").value.trim();
-    // var birthdate = document.getElementById("BirthDate").value.trim();
-    // var datefrom = document.getElementById("StudyDate").value.trim();
-    // var dateto = document.getElementById("dateto").value.trim();
-
     var paramExist = 0;
 
     var formParams = document.getElementById("formParams");
@@ -278,23 +262,8 @@ function drawtablelist(studyID, seriesID, instanceID, first, data, dataType) {
     }
 
     for (var j = first; j < dataAry.length; j++) {
-
-        // if (dataType != "Study" || dataAry[j].resource.series[0].modality.code != "SR") {
-
-        //     // var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
-        //     // var row = table.insertRow(-1);
-        //     // var cell = row.insertCell(0);
-        //     // cell.colSpan=3;
-        //     // cell.innerHTML="Not an Image"
-            
-        // } else {
-
-
-        // }
         drawInnertable(dataAry[j], studyID, seriesID, instanceID, first, dataType);
-        
     }
-
 }
 
 function drawInnertable(data, studyID, seriesID, instanceID, first, dataType) {
@@ -481,7 +450,7 @@ function drawInnertable(data, studyID, seriesID, instanceID, first, dataType) {
             getJSON(url, function (data) {
                 data = data[0];
                 if(data["7FE00010"]["BulkDataURI"]) {
-                    getJSON(data["7FE00010"]["BulkDataURI"], ));
+                    getJSON(data["7FE00010"]["BulkDataURI"], null);
                 }
             });
         };
