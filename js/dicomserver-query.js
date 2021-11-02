@@ -180,30 +180,29 @@ function getImagingStudyList() {
 
     var url = DICOMweb + '/studies';
 
-    var pID = document.getElementById("PatientID").value.trim();
-    var pName = document.getElementById("PatientName").value.trim();
-    var datefrom = document.getElementById("datefrom").value.trim();
-    var dateto = document.getElementById("dateto").value.trim();
+    // var pID = document.getElementById("PatientID").value.trim();
+    // var pName = document.getElementById("PatientName").value.trim();
+    // var birthdate = document.getElementById("BirthDate").value.trim();
+    // var datefrom = document.getElementById("StudyDate").value.trim();
+    // var dateto = document.getElementById("dateto").value.trim();
 
     var paramExist = 0;
 
-    if (pID != "") {
-        url += '?PatientID=' + pID
-        paramExist=1;
-    }
-    if (pName != "") {
-        url+= (paramExist==0)? '?': '&';
-        url += 'PatientName=' + pName
-        paramExist=1;
-    }
+    var formParams = document.getElementById("formParams");
+    var elements = formParams.elements;
 
-    if (datefrom != "") {
-        url+= (paramExist==0)? '?': '&';
-        url += 'StudyDate=' + datefrom;
-        if(dateto!= ""){
-            url += '-' + dateto;
+    for(var i =0; i<elements.length; i++) {
+        var value= elements[i].value;
+
+        if(value!="") {
+            url += (paramExist==0)? '?': '&';
+            url += elements[i].id +"="+ value;
+            if(elements[i].id == "StudyDate" && elements[i+1].value != "") {
+                url += '-' + elements[i+1].value;
+                i++;
+            }
+            paramExist = 1;
         }
-        paramExist=1;
     }
     
     getJSON(url, function (data) {
