@@ -271,7 +271,6 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
             // studyID = arr[2];
             break;
         case 'Instances':
-
             break;
         default:
             callback = null;
@@ -312,8 +311,6 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
                     drawtablelist(studyID, null, 0, data, "Series");
                 });
             } else if (dataType == "Series") {
-                
-                getInstances(studyID, seriesID);
                     //drawtablelist(studyID, seriesID, 0, data, "Instances");
                 // studyNum = studyID;
                 // seriesNum = data.uid;
@@ -329,10 +326,6 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
     var studyNum = 0,
         seriesNum = 0,
         instanceNum = 0;
-    
-    var tags = ["00080020", "00100010", "0020000D", "0020000E"];
-    var keywords = ["Study Date", "Patient Name", "StudyInstanceUID", "SeriesInstanceUID"]
-    
 
     var description = '';
     if (dataType == "Study") {
@@ -384,7 +377,6 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         // description += "StudyUID: " + studyNum + "<br>";
         // description += "SeriesUID: " + seriesNum + "<br>";
 
-
         if(data["0020000E"]["Value"]) {
             description += "SeriesInstanceUID: " + data["0020000E"]["Value"][0] + "<br>";
             seriesID=data["0020000E"]["Value"][0];
@@ -405,15 +397,9 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         row.onclick = createClickHandler(row, null);
     }
 
-    var img = document.createElement('img');
-    img.width = 100;
-    img.height = 100;
-    img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyNum + "&seriesUID=" + seriesNum + "&objectUID=" + instanceNum;
-    img.alt = "Preview Not Available"
     var rows = table.getElementsByTagName("tr");
     cell1.innerHTML = first + rows.length;
     cell2.innerHTML = description;
-    cell3.appendChild(img);
 
     // var limit = (last % 10 == 0) ? 10 : (last % 10);
     // if (table.rows.length == limit + 1) {
