@@ -180,7 +180,6 @@ function getImagingStudyList() {
     sessionStorage.setItem("DICOMweb", DICOMweb);
     sessionStorage.setItem("DICOMwado", DICOMwado);
 
-
     var url = DICOMweb + '/studies';
 
     // var pID = document.getElementById("PatientID").value.trim();
@@ -243,7 +242,7 @@ function getInstances(studyID, seriesID) {
 
 }
 
-function drawtablelist(studyID, seriesID, first, data, dataType) {
+function drawtablelist(studyID, seriesID, instanceID, first, data, dataType) {
     var header = ["No", dataType + " Description", "Preview"];
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
@@ -271,6 +270,7 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
             // studyID = arr[2];
             break;
         case 'Instances':
+            dataAry = data;
             break;
         default:
             callback = null;
@@ -291,13 +291,13 @@ function drawtablelist(studyID, seriesID, first, data, dataType) {
 
 
         // }
-        drawInnertable(dataAry[j], studyID, seriesID, first, dataType);
+        drawInnertable(dataAry[j], studyID, seriesID, instanceID, first, dataType);
         
     }
 
 }
 
-function drawInnertable(data, studyID, seriesID, first, dataType) {
+function drawInnertable(data, studyID, seriesID, instanceID, first, dataType) {
     var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
     var row = table.insertRow(-1);
     var cell1 = row.insertCell(0);
@@ -308,9 +308,13 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
             if (dataType == "Study") {
                 var url = DICOMweb + '/studies/' + studyID + '/series';
                 getJSON(url, function (data) {
-                    drawtablelist(studyID, null, 0, data, "Series");
+                    drawtablelist(studyID, null, null, 0, data, "Series");
                 });
             } else if (dataType == "Series") {
+                var url = DICOMweb + '/studies/' + studyID + '/series/' + seriesID + '/instances';
+                getJSON(url, function (data) {
+                    drawtablelist(studyID, seriesID, null, 0, data, "Instances");
+                });
                     //drawtablelist(studyID, seriesID, 0, data, "Instances");
                 // studyNum = studyID;
                 // seriesNum = data.uid;
@@ -355,7 +359,8 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         else {
             description += "StudyInstanceUID: -<br>";
         }
-        row.onclick = createClickHandler(row, null);
+        cell1.onclick = createClickHandler(row, null);
+        cell2.onclick = createClickHandler(row, null);
         
         
         // resource = data.resource;
@@ -377,12 +382,25 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         // description += "StudyUID: " + studyNum + "<br>";
         // description += "SeriesUID: " + seriesNum + "<br>";
 
+        if(data["0020000D"]["Value"]) {
+            description += "StudyInstanceUID: " + data["0020000D"]["Value"][0] + "<br>";
+            studyID=data["0020000D"]["Value"][0];
+        }
+        else {
+            description += "StudyInstanceUID: -<br>";
+        }
         if(data["0020000E"]["Value"]) {
             description += "SeriesInstanceUID: " + data["0020000E"]["Value"][0] + "<br>";
             seriesID=data["0020000E"]["Value"][0];
         }
         else {
             description += "SeriesInstanceUID: -<br>";
+        }
+        if(data["00200011"]["Value"]) {
+            description += "Series Number: " + data["00200011"]["Value"][0] + "<br>";
+        }
+        else {
+            description += "Series Number: -<br>";
         }
 
         // if (data.number != null);
@@ -394,12 +412,89 @@ function drawInnertable(data, studyID, seriesID, first, dataType) {
         // if (data.numberOfInstances != null)
         //     description += "Number of instances: " + data.numberOfInstances + "<br>";
 
-        row.onclick = createClickHandler(row, null);
+        cell1.onclick = createClickHandler(row, null);
+        cell2.onclick = createClickHandler(row, null);
+
+        var btn = document.createElement('button');
+                btn.innerHTML = "Viewer";
+                btn.onclick = function() {getInstances(studyID, seriesID)};
+                cell3.append(btn);
     }
+    else if(dataType == "Instances") {
+        
+
+        if(data["0020000D"]["Value"]) {
+            description += "StudyInstanceUID: " + data["0020000D"]["Value"][0] + "<br>";
+            studyID=data["0020000D"]["Value"][0];
+        }
+        else {
+            description += "StudyInstanceUID: -<br>";
+        }
+        if(data["0020000E"]["Value"]) {
+            description += "SeriesInstanceUID: " + data["0020000E"]["Value"][0] + "<br>";
+            seriesID=data["0020000E"]["Value"][0];
+        }
+        else {
+            description += "SeriesInstanceUID: -<br>";
+        }
+        if(data["00080018"]["Value"]) {
+            description += "SOPInstanceUID: " + data["00080018"]["Value"][0] + "<br>";
+            instanceID=data["00080018"]["Value"][0];
+        }
+        else {
+            description += "SOPInstanceUID: -<br>";
+        }
+    }
+
+    var btnClickHandler = function (getType) {
+        return function () {
+            var url;
+            if (dataType == "Study") {
+                url = DICOMweb + '/studies/' + studyID + "/" + getType;
+                
+            } else if (dataType == "Series") {
+                url = DICOMweb + '/studies/' + studyID +'/series/' + seriesID  + "/"+ getType;
+             
+            } else if (dataType == "Instances") {
+                url = DICOMweb + '/studies/' + studyID +'/series/' + seriesID  + '/instances/' + instanceID+ "/"+ getType;
+            }
+
+            getJSON(url, function (data) {
+                alert(JSON.stringify(data));
+            });
+        };
+    }
+    
+    var btnMeta = document.createElement('button');
+    btnMeta.innerHTML = "Get Metadata";
+    btnMeta.onclick = btnClickHandler("metadata");
+
+    var btnDownload = document.createElement('button');
+    btnDownload.innerHTML = "Download DICOM";
+    btnDownload.onclick = btnClickHandler("");
+
+    if(dataType == "Instances") {
+        var btn = document.createElement('button');
+        btn.innerHTML = "Bulk Data";
+        btn.onclick = function() {
+            var url = DICOMweb + '/studies/' + studyID +'/series/' + seriesID  + '/instances/' + instanceID+ "/metadata";
+            getJSON(url, function (data) {
+                data = data[0];
+                if(data["7FE00010"]["BulkDataURI"]) {
+                    getJSON(data["7FE00010"]["BulkDataURI"], ));
+                }
+            });
+        };
+        cell3.append(btn);
+    }
+
+    
 
     var rows = table.getElementsByTagName("tr");
     cell1.innerHTML = first + rows.length;
     cell2.innerHTML = description;
+    cell3.appendChild(btnMeta);
+    cell3.appendChild(btnDownload);
 
     // var limit = (last % 10 == 0) ? 10 : (last % 10);
     // if (table.rows.length == limit + 1) {
@@ -435,7 +530,7 @@ function setcontentNavbar(studyID, seriesID, first, data, dataType) {
 
         divNavbar.appendChild(par);
         temp_link.addEventListener("click", e => {
-            drawtablelist(studyID, seriesID, first, data, dataType);
+            drawtablelist(studyID, seriesID, instanceID, first, data, dataType);
         });
     }
 }
