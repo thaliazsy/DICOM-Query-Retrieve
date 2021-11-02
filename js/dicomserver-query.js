@@ -7,13 +7,23 @@
 // var DICOMwado = 'https://orthanc.dicom.tw/wado';
 // var DICOMui = 'https://d4c.dicom.org.tw/dcm4chee-arc/ui2';
 
-init();
+//init();
+
+var returnType = 'json';
 
 function getJSON(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
+
+    if(returnType=='xml') {
+        xhr.setRequestHeader('content-type', 'application/dicom+xmls');
+        xhr.setRequestHeader('accept', 'multipart/related');
+    }
+    else {
     xhr.responseType = 'json';
-     //xhr.setRequestHeader('type', 'application/dicom+json');
+    }
+
+    
     //xhr.setRequestHeader('Authorization', DICOMtoken);
 
     xhr.onload = function () {
@@ -29,17 +39,30 @@ function getDICOM(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     //xhr.responseType = 'application/dicom';
-    xhr.setRequestHeader('Accept', 'multipart/related');
-    xhr.setRequestHeader('type', 'application/dicom+json')
+    if(returnType=='xml') {
+        
+        xhr.setRequestHeader('Accept', 'multipart/related');
+        xhr.setRequestHeader('type', 'application/dicom+xml')
+    }
     //xhr.setRequestHeader('Authorization', DICOMtoken);
 
     xhr.onload = function () {
         var status = xhr.status;
         if (status == 200) {
+            alert(xhr.response);
             callback(xhr.response);
         }
+        else {
+            alert(xhr.response);
+            alert(xhr.status);
+        }
     };
-    xhr.send();
+    try{
+        xhr.send();
+    }
+    catch{
+        alert(xhr);
+    }
 }
 
 function init() {
@@ -47,7 +70,12 @@ function init() {
     if (fhirID != undefined) {
         var url = FHIRrootURL + '/ImagingStudy/' + fhirID;
         getJSON(url, null, null, function (data) {
-            drawtablelist(null, null, 0, data, "Series");
+            if(returnType=="xml"){
+
+            }
+            else {
+                drawtablelist(null, null, null, 0, data, "Series");
+            }
 
         });
     }
@@ -140,6 +168,8 @@ function getPatientList() {
 }
 
 function getImagingStudyList() {
+    returnType = 'json';
+
     var header = ["No", "Study Description", "Preview"];
     var tableTarget = document.getElementById("tablelist")
     clearTable(header, tableTarget);
@@ -177,7 +207,12 @@ function getImagingStudyList() {
     }
     
     getJSON(url, function (data) {
-        drawtablelist(null, null, 0, data, "Study");
+        if(returnType=='xml'){
+            drawtablelistXML(null, null, 0, data, "Study");
+        }
+        else {
+            drawtablelist(null, null, null, 0, data, "Study");
+        }
     });
 }
 
@@ -480,4 +515,90 @@ function populateInstancesList(studyID, seriesID, first, data) {
         }
         return dcmFiles;
     }
+}
+
+function drawtablelistXML(studyID, seriesID, first, data, dataType) {
+    var header = ["No", dataType + " Description", "Preview"];
+    var tableTarget = document.getElementById("tablelist")
+    clearTable(header, tableTarget);
+    //setcontentNavbar(studyID, seriesID, first, data, dataType);
+
+    if(data.length == 0){
+        var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+        var row = table.insertRow();
+        var cell = row.insertCell();
+        cell.colSpan=3;
+        cell.style.textAlign="center";
+        cell.innerHTML = "No data!";
+    }
+
+    //data is string with multiple NativeDicomModel tags
+    //split tags by new line \n
+    var dataAry = data.split("\n");
+
+    for (var j = first; j < dataAry.length; j++) {
+        if(dataAry[j].startsWith("<?xml")){
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(dataAry[j], "text/xml");
+            
+            drawInnertableXML(xmlDoc, studyID, seriesID, first, dataType);
+        }   
+        
+    }
+
+}
+
+function drawInnertableXML(data, studyID, seriesID, first, dataType) {
+    var table = document.getElementById("tablelist").getElementsByTagName("tbody")[0];
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var createClickHandler = function () {
+        return function () {
+            if (dataType == "Study") {
+                var url = DICOMweb + '/studies/' + studyID + '/series';
+                getJSON(url, function (data) {
+                    drawtablelistXML(studyID, null, 0, data, "Series");
+                });
+            } else if (dataType == "Series") {
+                getInstances(studyID, seriesID);
+            } else if (dataType == "Instances") {
+                studyNum = studyID;
+                seriesNum = data.uid;
+                getInstances(studyNum, seriesNum);
+            }
+        };
+    };
+
+    var studyNum = 0,
+        seriesNum = 0;
+    var description = '';
+    
+    var tags = ["00080020","00100020", "00100010", "0020000D", "0020000E"];
+    var keywords = ["Study Date", "Patient ID", "Patient Name", "StudyInstanceUID", "SeriesInstanceUID"]
+    
+    var x = xmlDoc.getElementsByTagName("DicomAttribute");
+    for(var i=0; i<x.length; i++) {
+        var tag = x[i].getAttribute('tag');
+        for(var j = 0; j< tags.length; j++) {
+            if(tag==tags[j]) {
+                if(tag=="0020000D")
+                {
+                    studyID = x[i].getElementsByTagName("Value")[0].textContent;
+                }
+                description += keywords[j] + ": " + x[i].getElementsByTagName("Value")[0].textContent + "<br>";
+                break;
+            }
+        }
+    }
+
+    row.onclick = createClickHandler(row, null);
+
+    //img.src = DICOMrootURL + "/wado/?requestType=WADO&contentType=image/jpeg&studyUID=" + studyNum + "&seriesUID=" + seriesNum + "&objectUID=" + instanceNum;
+    img.alt = "Preview Not Available"
+    var rows = table.getElementsByTagName("tr");
+    cell1.innerHTML = first + rows.length;
+    cell2.innerHTML = description;
+    cell3.appendChild(img);
 }
