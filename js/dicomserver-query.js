@@ -11,7 +11,7 @@ function getJSON(url, callback) {
         xhr.setRequestHeader('accept', 'multipart/related');
     }
     else {
-    xhr.responseType = 'json';
+        xhr.responseType = 'json';
     }
 
     //xhr.setRequestHeader('Authorization', DICOMtoken);
@@ -147,10 +147,6 @@ function getPatientList() {
                         }
 
                     });
-
-
-
-
                 });
             }
         });
